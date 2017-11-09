@@ -6,7 +6,7 @@ import sys
 
 class Edge:
     def __init__ (self, origin=None):
-        self.origin = ... # write appropriate value
+        self.origin = origin # write appropriate value
         self.weight = ... # write appropriate value
 
     def __repr__(self):
@@ -20,7 +20,8 @@ class Airport:
         self.name = name
         self.routes = []
         self.routeHash = dict()
-        self.outweight =    # write appropriate value
+        self.outweight = ...  # write appropriate value
+        self.pageIndex = ...
 
     def __repr__(self):
         return "{0}\t{2}\t{1}".format(self.code, self.name, self.pageIndex)
@@ -31,7 +32,7 @@ airportList = [] # list of Airport
 airportHash = dict() # hash key IATA code -> Airport
 
 def readAirports(fd):
-    print "Reading Airport file from {0}".format(fd)
+    print("Reading Airport file from {0}".format(fd))
     airportsTxt = open(fd, "r");
     cont = 0
     for line in airportsTxt.readlines():
@@ -49,18 +50,40 @@ def readAirports(fd):
             airportList.append(a)
             airportHash[a.code] = a
     airportsTxt.close()
-    print "There were {0} Airports with IATA code".format(cont)
+    print("There were {0} Airports with IATA code".format(cont))
 
 
 def readRoutes(fd):
-    print "Reading Routes file from {0}".format(fd)
-    # write your code
+    print("Reading Routes file from {0}".format(fd))
+    routesTxt = open(fd, "r");
+    cont = 0
+    for line in routesTxt.readlines():
+        e = Edge()
+        try:
+            temp = line.split(',')
+            if len(temp[2]) != 3 or len(temp[4]) != 3:
+                raise Exception('not an IATA code')
+            dest = temp[4]
+            e.origin = temp[2]
+        except Exception as inst:
+            pass
+        else:
+            cont += 1
+            edgeList.append(e)
+            edgeHash[e.origin] = e
+            if dest in airportHash:
+                airportHash[dest].routes.append(e)
+                airportHash[dest].routeHash[e.origin] = e
+    routesTxt.close()
+    print("There were {0} Routes with IATA code".format(cont))
 
 def computePageRanks():
     # write your code
+    return None
 
 def outputPageRanks():
     # write your code
+    return None
 
 def main(argv=None):
     readAirports("airports.txt")
@@ -69,8 +92,8 @@ def main(argv=None):
     iterations = computePageRanks()
     time2 = time.time()
     outputPageRanks()
-    print "#Iterations:", iterations
-    print "Time of computePageRanks():", time2-time1
+    print("#Iterations:", iterations)
+    print("Time of computePageRanks():", time2-time1)
 
 
 if __name__ == "__main__":
