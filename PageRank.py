@@ -83,15 +83,15 @@ def readRoutes(fd):
                     airportHash[e.origin].outweight += 1
     print("There were {0} Routes with IATA code".format(cont))
 
-def stoppingCondition(old,new,it):
-    return ([round(o,16) for o in old] == [round(n,16) for n in new])
-
+def stoppingCondition(old,new,n_decimals):
+    return ([round(o,n_decimals) for o in old] == [round(n,n_decimals) for n in new])
 
 def computePageRanks():
     n = len(airportList)
     P = [1.0/n] * n
     last_P = [0] * n
     L = 0.85
+    n_decimals = 8
     it = 0
 
     ini_weight = 0
@@ -99,7 +99,7 @@ def computePageRanks():
         if airportList[i].outweight == 0:
             ini_weight += P[i]/n
 
-    while not stoppingCondition(last_P,P,it):
+    while not stoppingCondition(last_P,P,n_decimals):
         last_P = P
         Q = [0] * n;
         end_weight = 0
@@ -123,7 +123,8 @@ def computePageRanks():
 def outputPageRanks(pageRanks):
     airportList.sort(key=lambda ax: pageRanks[ax.pageIndex], reverse=True)
     for a in airportList:
-        print('PR: %0.16f | Airport: [%s] %s' % (pageRanks[a.pageIndex],a.code,a.name))
+        #print('PR: %0.16f | Airport: [%s] %s' % (pageRanks[a.pageIndex],a.code,a.name))
+        print('Airport: [%s] %s' % (a.code,a.name))
 
 def main(argv=None):
     readAirports("airports.txt")
